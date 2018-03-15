@@ -8,9 +8,11 @@
 
 import UIKit
 import Foundation
+import SwiftyJSON
 
-let riverDict = SelectedRiver.River.riverArray
-var changedRiverDict = riverDict
+
+var changedRiverDict = [String]()
+var riverJson = RiverData()
 
 class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
@@ -26,17 +28,26 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
+        //let count = riverJson.riverData.count
+
+        for i in 1...riverJson.riverData.count {
+            print(riverJson.riverData[i - 1]["river"])
+        }
+        
+        
+     
         
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return changedRiverDict.count
+        return riverJson.riverData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "RiverCell") else {fatalError()}
-        cell.textLabel?.text = changedRiverDict[indexPath.row]
+        cell.textLabel?.text = riverJson.riverData[indexPath.row]["river"].stringValue
+        changedRiverDict.append(riverJson.riverData[indexPath.row]["river"].stringValue)
         cell.layer.backgroundColor = UIColor.clear.cgColor
         cell.textLabel?.textColor = UIColor.white
         
@@ -63,7 +74,7 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if riverSearchBar.text?.count == 0 {
-            changedRiverDict = riverDict
+            changedRiverDict = []
             RiverTableView.reloadData()
         }
         

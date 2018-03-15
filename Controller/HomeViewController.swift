@@ -7,20 +7,22 @@
 //
 
 import UIKit
+import ChameleonFramework
 
 class HomeViewController: UIViewController {
 
+    @IBOutlet weak var titleLabel: UILabel!
+  
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.red], for: .normal)
+        
+        titleLabel.textColor = UIColor.flatWhite
+        
+        
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
+   
 }
 
