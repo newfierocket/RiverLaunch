@@ -106,6 +106,9 @@
                                 <state key="normal" title="Add New Location">
                                     <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <segue destination="up5-YD-XWa" kind="show" id="rtk-uR-88l"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -122,6 +125,77 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dnv-kz-Xdk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2229.5999999999999" y="-481.70914542728639"/>
+        </scene>
+        <!--Enter Launch Data View Controller-->
+        <scene sceneID="FSU-eW-Vfg">
+            <objects>
+                <viewController id="up5-YD-XWa" customClass="EnterLaunchDataViewController" customModule="RiverLaunch" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="c5X-YF-MWc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Nighthawk" translatesAutoresizingMaskIntoConstraints="NO" id="S2u-MA-tTe">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                            </imageView>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Enter Boat Launch Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2bf-gu-WcS">
+                                <rect key="frame" x="62" y="147" width="250" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Enter Latitude" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Dtk-70-SAv">
+                                <rect key="frame" x="62" y="199" width="250" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Enter longitude" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="84L-Jq-XCO">
+                                <rect key="frame" x="62" y="255" width="250" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Enter Rating" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PPd-87-KuK">
+                                <rect key="frame" x="62" y="307" width="250" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="COg-Nr-5fc">
+                                <rect key="frame" x="94" y="456" width="186" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <state key="normal" title="Submit">
+                                    <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="submitDataButton:" destination="up5-YD-XWa" eventType="touchUpInside" id="v6B-dx-RSl"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="S2u-MA-tTe" firstAttribute="bottom" secondItem="wSc-Is-c4b" secondAttribute="bottom" id="AKM-yd-ubL"/>
+                            <constraint firstItem="S2u-MA-tTe" firstAttribute="leading" secondItem="wSc-Is-c4b" secondAttribute="leading" id="K0R-6L-fLO"/>
+                            <constraint firstItem="S2u-MA-tTe" firstAttribute="top" secondItem="c5X-YF-MWc" secondAttribute="top" id="N0j-f1-Ccf"/>
+                            <constraint firstItem="S2u-MA-tTe" firstAttribute="trailing" secondItem="wSc-Is-c4b" secondAttribute="trailing" id="lAa-E8-M3b"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="wSc-Is-c4b"/>
+                    </view>
+                    <connections>
+                        <outlet property="enterLongitudeTextField" destination="84L-Jq-XCO" id="3KT-I9-c9n"/>
+                        <outlet property="enteredLatitudeTextField" destination="Dtk-70-SAv" id="Q6Y-mP-lFe"/>
+                        <outlet property="enteredLaunchNameTextField" destination="2bf-gu-WcS" id="uuz-01-qdk"/>
+                        <outlet property="enteredRatingTextField" destination="PPd-87-KuK" id="kn6-40-bWj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vFn-rA-fvr" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3016.8000000000002" y="-478.11094452773619"/>
         </scene>
         <!--Home-->
         <scene sceneID="tne-QT-ifu">
@@ -206,7 +280,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zsr-4K-k1w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3045.5999999999999" y="-480.80959520239884"/>
+            <point key="canvasLocation" x="3006" y="-1177"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="hIZ-8n-IdE">

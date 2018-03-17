@@ -11,6 +11,8 @@ import Foundation
 class SelectedRiver {
     
     static let River = SelectedRiver()
+    let riverNames = ["Wapiti River", "Smokey River", "Simonette River", "Red Deer River", "Red Willow River", "Athabasca River",
+                      "North Saskatchewan River"]
     var selectedRiver: Int?
     
 }
