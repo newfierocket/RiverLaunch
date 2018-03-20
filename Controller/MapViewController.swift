@@ -10,25 +10,35 @@ import UIKit
 import MapKit
 import SwiftyJSON
 import Firebase
+import SCLAlertView
 
-class MapViewController: UIViewController {
+class MapViewController: UIViewController, MKMapViewDelegate {
     
-    var riverNumber: Int?
+    //var riverNumber: Int?
     let regionRadius: CLLocationDistance = 20000
     var index: Int?
     let riverData = RiverData()
-    var locations = [String : JSON]()
+    //var locations = [String : JSON]()
     var initialLocation: CLLocation?
     var riverName: String?
     var riverArray : [LaunchData] = [LaunchData]()
     let group = DispatchGroup()
     
+    
+    
     @IBOutlet weak var riverMapView: MKMapView!
     
     
     override func viewDidLoad() {
-        
+       
         super.viewDidLoad()
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.dropPinLocation))
+        longPress.minimumPressDuration = 2.0
+        riverMapView.addGestureRecognizer(longPress)
+        
+        riverMapView.delegate = self
+        riverMapView.showsUserLocation = true
         index = SelectedRiver.River.selectedRiver
        
         if let riverIndex = index {
@@ -51,10 +61,7 @@ class MapViewController: UIViewController {
     }
     
     
-    override func viewDidAppear(_ animated: Bool) {
 
-
-    }
     //MARK: - MAP FUNCTIONS
     //MARK: - HELPER FUNCTION TO CENTER ON MAP
     
@@ -75,19 +82,51 @@ class MapViewController: UIViewController {
         }
     
     }
-    
-    
-    //MARK: - IM NOT SURE IF THIS IS EVEN BEING USED YET.
-    //SHOULD HELP WITH BUTTON SELECTION FOR DIRECTIONS
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let placemark = MKPlacemark(coordinate: view.annotation!.coordinate, addressDictionary: nil)
-        // The map item is the restaurant location
-        let mapItem = MKMapItem(placemark: placemark)
+    //MARK: - ADD DROPPED PIN TO MAP ----> MOVE TO OTHER MAP VIEW FOR ADDING LAUNCH DATA
+    @objc func dropPinLocation(gestureRecognizer: UIGestureRecognizer) {
         
-        let launchOptions = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeTransit]
-        mapItem.openInMaps(launchOptions: launchOptions)
-    }
+        for oldPin in riverMapView.annotations {
+            if let title = oldPin.title, title == "Dropped Pin" {
+                riverMapView.removeAnnotation(oldPin)
+            }
+        }
+        
+        let annotation = MKPointAnnotation()
+        let touchedPoint = gestureRecognizer.location(in: riverMapView)
+        let corrdinates = riverMapView.convert(touchedPoint, toCoordinateFrom: riverMapView)
+        
+        annotation.coordinate = corrdinates
+        annotation.title = "Dropped Pin"
+        riverMapView.addAnnotation(annotation)
+        
+        }
     
+        
+    
+
+ 
+    //MARK: - TRANSFER DATA TO APPLE MAPS FOR DIRECTIONS.
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+       
+        
+        let apperance = SCLAlertView.SCLAppearance(showCircularIcon: false,  circleBackgroundColor: UIColor.white, contentViewColor: UIColor.flatWhite, titleColor: UIColor.flatBlack, subTitleColor: UIColor.white)
+        let alert = SCLAlertView(appearance: apperance)
+        
+        alert.addButton("Get Directions") {
+            let placemark = MKPlacemark(coordinate: view.annotation!.coordinate, addressDictionary: nil)
+            let mapItem = MKMapItem(placemark: placemark)
+            let launchOptions = [MKLaunchOptionsDirectionsModeKey:MKLaunchOptionsDirectionsModeDriving]
+            mapItem.openInMaps(launchOptions: launchOptions)
+        }
+        alert.showInfo("Directions")
+        
+        
+        
+        
+    
+    }
+ 
+    // MARK: - MAP SELECTOR
     @IBAction func mapSelector(_ sender: UISegmentedControl) {
         
         riverMapView.mapType = MKMapType.init(rawValue: UInt(sender.selectedSegmentIndex)) ?? .standard
@@ -123,7 +162,7 @@ class MapViewController: UIViewController {
       
     }
     
-    //MAARK: - ADD PIN LOCATION FOR BOAT LAUNCH
+    //MAARK: - ADD PIN LOCATION FOR BOAT LAUNCH FROM FIREBASE DATA
     func addLaunchData() {
         
         for i in 0..<riverArray.count {
@@ -133,6 +172,7 @@ class MapViewController: UIViewController {
             let mylongitude = Double(riverArray[i].longitude)
             let coordinate = CLLocationCoordinate2D(latitude: mylatitude!, longitude: mylongitude!)
             let pin = BoatLaunchData(title: title, locationName: launchName, coordinate: coordinate)
+            
             riverMapView.addAnnotation(pin)
         
         }
