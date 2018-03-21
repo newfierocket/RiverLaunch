@@ -8,11 +8,15 @@
 
 import UIKit
 import Firebase
+import SCLAlertView
 
-class EnterLaunchDataViewController: UIViewController {
+class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
     var riverName: String?
     var index: Int?
+    var dataFromDropPinViewController: [String : String]?
+   
+    
     
     @IBOutlet weak var enteredLaunchNameTextField: UITextField!
     @IBOutlet weak var enteredLatitudeTextField: UITextField!
@@ -28,6 +32,7 @@ class EnterLaunchDataViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         if let riverIndex = index {
             riverName = SelectedRiver.River.riverNames[riverIndex]
             
@@ -37,9 +42,44 @@ class EnterLaunchDataViewController: UIViewController {
         
         navigationItem.title = riverName
 
+
        
     }
     
+  
+    func setResultOfDroppedPin(valueSent: [String : String]) {
+        dataFromDropPinViewController = valueSent
+        
+        if let data = dataFromDropPinViewController {
+            enteredLatitudeTextField.text = data["latitude"]
+            enterLongitudeTextField.text = data["longitude"]
+        }
+        
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "GoToDropPin" {
+            let vc : DropPinViewController = segue.destination as! DropPinViewController
+            vc.delegate = self
+        }
+    }
+    
+    func showError() {
+        
+        let alert = SCLAlertView()
+        alert.showError("Incorrect or Incomplete Data")
+        clearTextFields()
+    }
+    
+    func clearTextFields() {
+        enteredLaunchNameTextField.text = ""
+        enteredLatitudeTextField.text = ""
+        enterLongitudeTextField.text = ""
+        enteredRatingTextField.text = ""
+        
+    }
+ 
     
     
     
@@ -55,22 +95,20 @@ class EnterLaunchDataViewController: UIViewController {
         
         let rating = enteredRatingTextField?.text, !rating.isEmpty
         
-        else { print("invalid data")
+        else { showError()
             return
         }
         
-        guard let _ = Double(latitude) else { print("Invalid Data Latitude"); return}
-        guard let _ = Double(longitude) else { print("Invalid Data Longitude"); return}
+        guard let _ = Double(latitude) else { let alert = SCLAlertView(); alert.showError("Latitude Incorrect"); return}
+        guard let _ = Double(longitude) else { let alert = SCLAlertView(); alert.showError("Longitude Incorrect"); return}
         
         
         let riverDataToStore = ["launchname" : launchName, "latitude" : latitude, "longitude" : longitude, "rating" : rating]
         let myDataBase = Database.database().reference().child(riverName!)
         myDataBase.childByAutoId().updateChildValues(riverDataToStore)
+        let alert = SCLAlertView(); alert.showSuccess("Data Uploaded Successfully")
         
-        enteredLaunchNameTextField.text = ""
-        enteredLatitudeTextField.text = ""
-        enterLongitudeTextField.text = ""
-        enteredRatingTextField.text = ""
+        clearTextFields()
         
         }
     

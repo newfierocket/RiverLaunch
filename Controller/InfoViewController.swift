@@ -13,8 +13,7 @@ class InfoViewController: UIViewController {
     
     let riverData = RiverData()
     var riverIndex: Int?
-    
-    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,16 +21,18 @@ class InfoViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+       
+        
         if let riverIndex = SelectedRiver.River.selectedRiver {
             title = riverData.riverData[riverIndex]["river"].stringValue
     }
+        
     }
-
-
+        
+        
+        
+        
+        
+    }
     
 
-    
-
-    
-
-}

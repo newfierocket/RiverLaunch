@@ -12,7 +12,9 @@ import SwiftyJSON
 import Firebase
 import SCLAlertView
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate{
+    
+    
     
     //var riverNumber: Int?
     let regionRadius: CLLocationDistance = 20000
@@ -26,6 +28,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     
+    
+    
+    
     @IBOutlet weak var riverMapView: MKMapView!
     
     
@@ -33,9 +38,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
        
         super.viewDidLoad()
         
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.dropPinLocation))
-        longPress.minimumPressDuration = 2.0
-        riverMapView.addGestureRecognizer(longPress)
+        
         
         riverMapView.delegate = self
         riverMapView.showsUserLocation = true
@@ -61,6 +64,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     
+    
 
     //MARK: - MAP FUNCTIONS
     //MARK: - HELPER FUNCTION TO CENTER ON MAP
@@ -82,28 +86,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     
     }
-    //MARK: - ADD DROPPED PIN TO MAP ----> MOVE TO OTHER MAP VIEW FOR ADDING LAUNCH DATA
-    @objc func dropPinLocation(gestureRecognizer: UIGestureRecognizer) {
-        
-        for oldPin in riverMapView.annotations {
-            if let title = oldPin.title, title == "Dropped Pin" {
-                riverMapView.removeAnnotation(oldPin)
-            }
-        }
-        
-        let annotation = MKPointAnnotation()
-        let touchedPoint = gestureRecognizer.location(in: riverMapView)
-        let corrdinates = riverMapView.convert(touchedPoint, toCoordinateFrom: riverMapView)
-        
-        annotation.coordinate = corrdinates
-        annotation.title = "Dropped Pin"
-        riverMapView.addAnnotation(annotation)
-        
-        }
     
-        
     
-
  
     //MARK: - TRANSFER DATA TO APPLE MAPS FOR DIRECTIONS.
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
