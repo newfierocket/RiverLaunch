@@ -19,10 +19,12 @@ protocol HandleMapSearch {
 }
 
 
-class DropPinViewController: UIViewController, MKMapViewDelegate {
+class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
 
     
     @IBOutlet weak var riverDropPinMapView: MKMapView!
+    
+    let locationManager = CLLocationManager()
     
     var searchResultsController: UISearchController? = nil
     var delegate: MyProtocol?
@@ -30,6 +32,11 @@ class DropPinViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
         
         let alert1 = SCLAlertView()
         let alert2 = SCLAlertView()
@@ -58,6 +65,12 @@ class DropPinViewController: UIViewController, MKMapViewDelegate {
         
     }
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //riverDropPinMapView.showsUserLocation = true
+        
+        
+    }
+    
 
     
     //MARK: - ADD DROPPED PIN TO MAP ----> MOVE TO OTHER MAP VIEW FOR ADDING LAUNCH DATA
@@ -79,6 +92,7 @@ class DropPinViewController: UIViewController, MKMapViewDelegate {
     
         let corrdinatesToSend = ["latitude" : String(corrdinates.latitude), "longitude" : String(corrdinates.longitude)]
         delegate?.setResultOfDroppedPin(valueSent: corrdinatesToSend)
+        locationManager.stopUpdatingLocation()
         navigationController?.popViewController(animated: true)
     }
     
