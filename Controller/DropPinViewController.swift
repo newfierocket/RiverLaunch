@@ -32,7 +32,7 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
         locationManager.delegate = self
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
@@ -41,16 +41,16 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         let alert1 = SCLAlertView()
         let alert2 = SCLAlertView()
         alert1.showInfo("Search or pinch to zoom")
-        alert2.showInfo("Hold for 2 seconds to set location")
+        alert2.showInfo("Triple Tap to set location")
         
        
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! MapSearchResultsViewController
         searchResultsController = UISearchController(searchResultsController: locationSearchTable)
         searchResultsController?.searchResultsUpdater = locationSearchTable
         
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(self.dropPinLocation))
-        longPress.minimumPressDuration = 2.0
-        riverDropPinMapView.addGestureRecognizer(longPress)
+        let tripleTap = UITapGestureRecognizer(target: self, action: #selector(self.dropPinLocation))
+        tripleTap.numberOfTapsRequired = 3
+        riverDropPinMapView.addGestureRecognizer(tripleTap)
         
         
         let searchBar = searchResultsController!.searchBar
@@ -85,16 +85,25 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         let annotation = MKPointAnnotation()
         let touchedPoint = gestureRecognizer.location(in: riverDropPinMapView)
         let corrdinates = riverDropPinMapView.convert(touchedPoint, toCoordinateFrom: riverDropPinMapView)
-        
+        print(corrdinates.latitude)
+        print(corrdinates.longitude)
         annotation.coordinate = corrdinates
         annotation.title = "Dropped Pin"
         riverDropPinMapView.addAnnotation(annotation)
     
         let corrdinatesToSend = ["latitude" : String(corrdinates.latitude), "longitude" : String(corrdinates.longitude)]
-        delegate?.setResultOfDroppedPin(valueSent: corrdinatesToSend)
-        locationManager.stopUpdatingLocation()
-        navigationController?.popViewController(animated: true)
+        let alert = SCLAlertView()
+        alert.addButton("Use Current Pin?") {
+            self.delegate?.setResultOfDroppedPin(valueSent: corrdinatesToSend)
+            self.locationManager.stopUpdatingLocation()
+            self.navigationController?.popViewController(animated: true)
+        }
+        alert.addButton("Cancel?") {
+            return
+        }
+        alert.showInfo("Proceed?")
     }
+    
     
     
     @IBAction func changeMapControl(_ sender: UISegmentedControl) {

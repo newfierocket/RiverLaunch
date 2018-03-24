@@ -120,7 +120,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     //MARK: - RETRIEVE DATA FROM FIREBASE
     func getRiverData(completion: @escaping () -> Void) {
         
-        let riverDB = Database.database().reference().child(riverName!)
+        let riverDB = Database.database().reference().child("launch").child(riverName!)
         group.enter()
         riverDB.observe(.childAdded) { (snapShot) in
             let snapShotValue = snapShot.value as! Dictionary<String, String>

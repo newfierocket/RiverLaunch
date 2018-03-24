@@ -14,6 +14,8 @@ import Kingfisher
 
 class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    @IBOutlet weak var pictureNameLabel: UILabel!
+    
     @IBOutlet weak var gallaryImageView: UIImageView!
     
     var imageArray: [ImageData] = [ImageData]()
@@ -22,12 +24,12 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     let picker = UIImagePickerController()
     let imageStorage = Storage.storage()
     var pictureIndex = 0
-    
+    var launchNameTextField = UITextField()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         picker.delegate = self
-        
+        pictureNameLabel.text = ""
         index = SelectedRiver.River.selectedRiver
         if let riverIndex = index {
             riverName = SelectedRiver.River.riverNames[riverIndex]
@@ -37,37 +39,26 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(getSwipeAction(_:)))
         self.gallaryImageView.addGestureRecognizer(swipeGesture)
         
-//        let url = URL(string: "https://firebasestorage.googleapis.com/v0/b/riverlaunch-6174c.appspot.com/o/2018-03-17%2023%3A11%3A01%20%2B0000.png?alt=media&token=29beba33-867f-43d3-813f-6ffad297c817")
-//        gallaryImageView.kf.setImage(with: url)
-//
-        
         getImageData {
             if self.imageArray.count > 0 {
                 for i in 0..<self.imageArray.count {
                     let url = URL(string: self.imageArray[i].imageURL)
                     self.gallaryImageView.kf.setImage(with: url)
+                    self.pictureNameLabel.text = self.imageArray[i].launchName
                     
                 }
             }
             
         }
-        
-        
-   
+     
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-//        if imageArray.count > 0 {
-//            for i in 0..<imageArray.count {
-//                let url = URL(string: imageArray[i].imageURL)
-//               gallaryImageView.kf.setImage(with: url)
-//
-//            }
-//        }
-    }
-    
+  
     @objc func getSwipeAction( _ recognizer : UISwipeGestureRecognizer){
-        
+        if imageArray.count == 0 {
+            return
+        } else {
+      
         let max = imageArray.count - 1
         if recognizer.direction == .right {
             print("swiped right")
@@ -86,45 +77,72 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
                 pictureIndex -= 1
             }
         }
+        }
 
         let url = URL(string: imageArray[pictureIndex].imageURL)
+        pictureNameLabel.text = imageArray[pictureIndex].launchName
         gallaryImageView.kf.setImage(with: url)
+    }
+    
+    
+    func uploadImageWithData(pickedImage: UIImage) {
+        let alert = UIAlertController(title: "Please Enter a Name", message: "", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter a name."
+            self.launchNameTextField = textField
+            
+        }
+        
+        let action = UIAlertAction(title: "Please Enter a Name", style: .default) { (alertAction) in
+            
+            let date = Date()
+            let riverRef = self.imageStorage.reference().child("\(date).png")
+            if let uploadData = pickedImage.jpeg(.lowest) {
+                
+                riverRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
+                    if error != nil {
+                        print(error!)
+                        return
+                    } else {
+                        if let url = metadata?.downloadURL()?.absoluteString {
+                            let imageData = ImageData()
+                            imageData.imageName = String(describing: date)
+                            imageData.imageURL = url
+                            imageData.imageBelongsToRiver = self.riverName!
+                            let dataToStore = ["imagename" : imageData.imageName, "url" : imageData.imageURL, "belongstoriver" : imageData.imageBelongsToRiver, "launchname" :  self.launchNameTextField.text!]
+                            let myDatabase = Database.database().reference().child("Gallary").child(self.riverName!)
+                            myDatabase.childByAutoId().updateChildValues(dataToStore)
+                            
+                            
+                        }
+                        
+                        
+                    }
+                })
+            }
+        }
+      
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+ 
+        
+        
+        
+        
+        
+        
     }
     
    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        
+        
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        
-        let date = Date()
-        let riverRef = imageStorage.reference().child("\(date).png")
-        if let uploadData = chosenImage.jpeg(.lowest) {
-
-            riverRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
-                if error != nil {
-                    print(error!)
-                    return
-                } else {
-                    if let url = metadata?.downloadURL()?.absoluteString {
-                        let imageData = ImageData()
-                        imageData.imageName = String(describing: date)
-                        imageData.imageURL = url
-                        imageData.imageBelongsToRiver = self.riverName!
-                        let dataToStore = ["imagename" : imageData.imageName, "url" : imageData.imageURL, "belongstoriver" : imageData.imageBelongsToRiver]
-                        let myDatabase = Database.database().reference().child("Gallary").child(self.riverName!)
-                        myDatabase.childByAutoId().updateChildValues(dataToStore)
-                        
-
-                    }
-                
-
-                }
-            })
-        }
-    
         dismiss(animated:true, completion: nil)
-        
-        
+        uploadImageWithData(pickedImage: chosenImage)
+      
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -134,13 +152,12 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @IBAction func addPictureButton(_ sender: UIBarButtonItem) {
         
-        picker.allowsEditing = true
-        picker.sourceType = .photoLibrary
-        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
-        present(picker, animated: true, completion: nil)
-     
+        self.picker.allowsEditing = true
+        self.picker.sourceType = .photoLibrary
+        self.picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        self.present(self.picker, animated: true, completion: nil)
+      
     }
-    
     
     
     func getImageData(completion: @escaping () -> Void) {
@@ -148,23 +165,29 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
         let riverDB = Database.database().reference().child("Gallary").child(riverName!)
         //group.enter()
         riverDB.observe(.childAdded) { (snapShot) in
+            
+            
             let snapShotValue = snapShot.value as! Dictionary<String, String>
             let url = snapShotValue["url"]!
-            print(url)
-            let riverName = snapShotValue["belongstoriver"]!
-            let imageName = snapShotValue["imagename"]!
+            guard
+            let belongsToRiver = snapShotValue["belongstoriver"],
+            let imageName = snapShotValue["imagename"],
+            let launchName = snapShotValue["launchname"]
             
-            print("inside image data")
-            
-            
+                else {
+                    return
+            }
+        
+          
             let imageData = ImageData()
-            imageData.imageBelongsToRiver = riverName
+            imageData.imageBelongsToRiver = belongsToRiver
             imageData.imageURL = url
             imageData.imageName = imageName
+            imageData.launchName = launchName
             
             
             self.imageArray.append(imageData)
-            print("#########\(self.imageArray)")
+            
             completion()
             
         }
@@ -172,10 +195,6 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
 }
     
-
-
-
-
 
 
 extension UIImage {

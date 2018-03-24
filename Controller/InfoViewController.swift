@@ -24,7 +24,7 @@ class InfoViewController: UIViewController {
        
         
         if let riverIndex = SelectedRiver.River.selectedRiver {
-            title = riverData.riverData[riverIndex]["river"].stringValue
+            title = SelectedRiver.River.riverNames[riverIndex]
     }
         
     }

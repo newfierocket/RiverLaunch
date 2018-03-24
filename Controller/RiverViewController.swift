@@ -18,6 +18,7 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
     @IBOutlet weak var riverSearchBar: UISearchBar!
     
     @IBOutlet weak var RiverTableView: UITableView!
+    let gesture = UIGestureRecognizer()
     
     
     override func viewDidLoad() {
@@ -27,7 +28,7 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
-        
+      
 
     }
     
@@ -63,7 +64,7 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     }
     
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if riverSearchBar.text?.count == 0 {
             changedRiverDict = riverDict

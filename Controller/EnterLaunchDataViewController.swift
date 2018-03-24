@@ -104,7 +104,7 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
         
         
         let riverDataToStore = ["launchname" : launchName, "latitude" : latitude, "longitude" : longitude, "rating" : rating]
-        let myDataBase = Database.database().reference().child(riverName!)
+        let myDataBase = Database.database().reference().child("launch").child(riverName!)
         myDataBase.childByAutoId().updateChildValues(riverDataToStore)
         let alert = SCLAlertView(); alert.showSuccess("Data Uploaded Successfully")
         
