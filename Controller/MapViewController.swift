@@ -42,10 +42,9 @@ class MapViewController: UIViewController, MKMapViewDelegate{
         
         riverMapView.delegate = self
         riverMapView.showsUserLocation = true
-        index = SelectedRiver.River.selectedRiver
-       
-        if let riverIndex = index {
-            riverName = SelectedRiver.River.riverNames[riverIndex]
+        //index = SelectedRiver.River.selectedRiver
+        if let title = SelectedRiver.River.selectedRiver {
+            riverName = title
             
             getRiverData {
                 if self.riverArray.count > 0 {
@@ -150,12 +149,12 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     func addLaunchData() {
         
         for i in 0..<riverArray.count {
-            let title = SelectedRiver.River.riverNames[index!]
+            let title = riverName
             let launchName = riverArray[i].launchName
             let mylatitude = Double(riverArray[i].latitude)
             let mylongitude = Double(riverArray[i].longitude)
             let coordinate = CLLocationCoordinate2D(latitude: mylatitude!, longitude: mylongitude!)
-            let pin = BoatLaunchData(title: title, locationName: launchName, coordinate: coordinate)
+            let pin = BoatLaunchData(title: title!, locationName: launchName, coordinate: coordinate)
             
             riverMapView.addAnnotation(pin)
         

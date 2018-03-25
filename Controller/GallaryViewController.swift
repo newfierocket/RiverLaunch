@@ -19,7 +19,7 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var gallaryImageView: UIImageView!
     
     var imageArray: [ImageData] = [ImageData]()
-    var index: Int?
+    var index: String?
     var riverName: String?
     let picker = UIImagePickerController()
     let imageStorage = Storage.storage()
@@ -32,7 +32,7 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
         pictureNameLabel.text = ""
         index = SelectedRiver.River.selectedRiver
         if let riverIndex = index {
-            riverName = SelectedRiver.River.riverNames[riverIndex]
+            riverName = riverIndex
         }
         
         gallaryImageView.isUserInteractionEnabled = true

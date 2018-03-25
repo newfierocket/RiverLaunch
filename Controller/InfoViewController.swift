@@ -22,9 +22,9 @@ class InfoViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
        
-        
+
         if let riverIndex = SelectedRiver.River.selectedRiver {
-            title = SelectedRiver.River.riverNames[riverIndex]
+            title = riverIndex
     }
         
     }

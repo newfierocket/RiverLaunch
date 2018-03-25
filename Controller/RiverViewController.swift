@@ -50,8 +50,18 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        SelectedRiver.River.selectedRiver = indexPath.row
-        tabBarController?.selectedIndex = 2
+        
+        if let sectionHeaderView = RiverTableView.cellForRow(at: indexPath) {
+            guard let title = sectionHeaderView.textLabel?.text else {fatalError()}
+            SelectedRiver.River.selectedRiver = title
+            
+        }
+        
+       
+        
+    
+        tabBarController?.selectedIndex = 1
+        
         
         
     }

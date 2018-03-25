@@ -13,7 +13,7 @@ import SCLAlertView
 class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
     var riverName: String?
-    var index: Int?
+    var index: String?
     var dataFromDropPinViewController: [String : String]?
    
     
@@ -34,7 +34,7 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
     override func viewWillAppear(_ animated: Bool) {
         
         if let riverIndex = index {
-            riverName = SelectedRiver.River.riverNames[riverIndex]
+            riverName = riverIndex
             
         } else {
             riverName = "No Selected River Yet"
