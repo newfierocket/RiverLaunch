@@ -10,12 +10,16 @@ import UIKit
 import Firebase
 import SCLAlertView
 
-class EnterLaunchDataViewController: UIViewController, MyProtocol {
+class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDelegate {
     
     var riverName: String?
     var index: String?
     var dataFromDropPinViewController: [String : String]?
+    var activeTextField: UITextField!
+    var originalHeight: CGFloat?
    
+    @IBOutlet weak var allStackView: UIStackView!
+    
     
     
     @IBOutlet weak var enteredLaunchNameTextField: UITextField!
@@ -26,12 +30,25 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboard()
         
+        enteredRatingTextField.delegate = self
+        enterLongitudeTextField.delegate = self
+        enteredLatitudeTextField.delegate = self
+        enteredLaunchNameTextField.delegate = self
+       
         index = SelectedRiver.River.selectedRiver
+        
+        
+        let center: NotificationCenter = NotificationCenter.default
+        center.addObserver(self, selector: #selector(keyBoardDidShow(notification:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        center.addObserver(self, selector: #selector(keyBoardWillHide(notification:)), name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+        
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
         
         if let riverIndex = index {
             riverName = riverIndex
@@ -43,8 +60,9 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
         navigationItem.title = riverName
 
 
-       
     }
+
+    
     
   
     func setResultOfDroppedPin(valueSent: [String : String]) {
@@ -112,8 +130,47 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
         
         }
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        activeTextField = textField
+       
+    }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
     
-
+    @objc func keyBoardDidShow(notification: Notification) {
+        
+        let info: NSDictionary = notification.userInfo! as NSDictionary
+        let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        let keyboardY = view.frame.size.height - keyboardSize.height
+        originalHeight = view.frame.height
+        let editingTextFieldY: CGFloat! = activeTextField?.frame.origin.y
+    
+        
+        if editingTextFieldY < keyboardY - 60 {
+            UIView.animate(withDuration: 0.25, animations: {
+                self.view.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: (self.view.frame.height - (self.allStackView.frame.origin.y + self.allStackView.frame.height)) + keyboardSize.height)
+            })
+        }
+        
+        
+    }
+    @objc func keyBoardWillHide(notification: Notification) {
+        UIView.animate(withDuration: 0.1) {
+            self.view.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.originalHeight!)
+            
+        }
+        
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidHide, object: nil)
+    }
+ 
 
 }
+
+

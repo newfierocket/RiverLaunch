@@ -24,6 +24,9 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboard()
+       
+    
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.red], for: .normal)
         
         titleLabel.textColor = UIColor.flatWhite
@@ -59,6 +62,8 @@ class HomeViewController: UIViewController {
         }
     
     }
+    
+   
     
     @IBAction func registerButton(_ sender: UIButton) {
         
@@ -98,4 +103,21 @@ class HomeViewController: UIViewController {
     
 
 }
+
+extension UIViewController {
+    func hideKeyboard()
+    {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(UIViewController.dismissKeyboard))
+        
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard()
+    {
+        view.endEditing(true)
+    }
+}
+
 
