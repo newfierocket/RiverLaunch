@@ -11,6 +11,7 @@ import MapKit
 import SwiftyJSON
 import Firebase
 import SCLAlertView
+import KVNProgress
 
 class MapViewController: UIViewController, MKMapViewDelegate{
     
@@ -24,7 +25,8 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     var initialLocation: CLLocation?
     var riverName: String?
     var riverArray : [LaunchData] = [LaunchData]()
-    let group = DispatchGroup()
+    //let group = DispatchGroup()
+    
     
     
     
@@ -40,30 +42,38 @@ class MapViewController: UIViewController, MKMapViewDelegate{
         
         
         
+        
         riverMapView.delegate = self
         riverMapView.showsUserLocation = true
         //index = SelectedRiver.River.selectedRiver
-        if let title = SelectedRiver.River.selectedRiver {
-            riverName = title
-            
+        
+       
+        
+        
+        guard let title = SelectedRiver.River.selectedRiver else { fatalError() }
+        
+        
+        riverName = title
+        
+        
             getRiverData {
+                
                 if self.riverArray.count > 0 {
                     self.addLaunchData()
                     self.zoomToRiver()
-                } else {
-                    print("Im going to turn this into an alert function")
+            
+            } else {
+                    //KVNProgress.showError(withStatus: "No Data Entered Yet!!")
                 }
                 
+                
             }
-               }  else {
-                    print("Nothing selected yet")
-        
-        }
        
     }
     
     
     
+ 
 
     //MARK: - MAP FUNCTIONS
     //MARK: - HELPER FUNCTION TO CENTER ON MAP
@@ -75,6 +85,10 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     
     //MARK: - ZOOM TO AREA
     func zoomToRiver() {
+        if riverArray.count == 0 {
+            print(riverArray.count)
+            KVNProgress.showError(withStatus: "No Data Entered Yet!!")
+            }
         
         let startingPoint = riverArray[0]
         if let myLatitude = Double(startingPoint.latitude) {
@@ -83,6 +97,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
             centerMapOnLocation(location: initialLocation!)
         
         }
+        
     
     }
     
@@ -120,15 +135,15 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     func getRiverData(completion: @escaping () -> Void) {
         
         let riverDB = Database.database().reference().child("launch").child(riverName!)
-        group.enter()
+        
         riverDB.observe(.childAdded) { (snapShot) in
             let snapShotValue = snapShot.value as! Dictionary<String, String>
             let launchName = snapShotValue["launchname"]!
-            print(launchName)
+            
             let latitude = snapShotValue["latitude"]!
             let longitude = snapShotValue["longitude"]!
             let rating = snapShotValue["rating"]!
-            print("inside river data")
+            
         
             
             let launchData = LaunchData()
@@ -138,14 +153,14 @@ class MapViewController: UIViewController, MKMapViewDelegate{
             launchData.rating = rating
             
             self.riverArray.append(launchData)
-            print("#########\(self.riverArray)")
-             completion()
+            
+            completion()
             
         }
       
     }
     
-    //MAARK: - ADD PIN LOCATION FOR BOAT LAUNCH FROM FIREBASE DATA
+    //MARK: - ADD PIN LOCATION FOR BOAT LAUNCH FROM FIREBASE DATA
     func addLaunchData() {
         
         for i in 0..<riverArray.count {

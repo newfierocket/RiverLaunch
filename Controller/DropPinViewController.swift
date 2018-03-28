@@ -65,10 +65,19 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         
     }
     
+  
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //riverDropPinMapView.showsUserLocation = true
         
-        
+//        var mapRegion = MKCoordinateRegion()
+//        mapRegion.center = riverDropPinMapView.userLocation.coordinate
+//        mapRegion.span.latitudeDelta = 2.5
+//        mapRegion.span.longitudeDelta = 2.5
+//
+//
+//        riverDropPinMapView.setRegion(mapRegion, animated: true)
+//
     }
     
 
@@ -108,7 +117,7 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     
     @IBAction func changeMapControl(_ sender: UISegmentedControl) {
         
-        riverDropPinMapView.mapType = MKMapType.init(rawValue: UInt(sender.selectedSegmentIndex)) ?? .standard
+        riverDropPinMapView.mapType = MKMapType.init(rawValue: UInt(sender.selectedSegmentIndex)) ?? .hybrid
     }
     
 
@@ -138,3 +147,4 @@ extension DropPinViewController: HandleMapSearch {
         riverDropPinMapView.setRegion(region, animated: true)
     }
 }
+
