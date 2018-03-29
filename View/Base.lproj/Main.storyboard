@@ -213,11 +213,6 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Nighthawk" translatesAutoresizingMaskIntoConstraints="NO" id="S2u-MA-tTe">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EBb-lM-MLx">
-                                <rect key="frame" x="10" y="10" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                            </button>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sC5-ok-2fK">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
@@ -473,7 +468,7 @@
                                 </constraints>
                                 <segments>
                                     <segment title="Standard"/>
-                                    <segment title="Satellite"/>
+                                    <segment title="Hybrid"/>
                                 </segments>
                                 <connections>
                                     <action selector="mapSelector:" destination="xFm-tW-fKu" eventType="valueChanged" id="qJS-YC-P07"/>
@@ -502,7 +497,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zsr-4K-k1w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2379" y="-1232"/>
+            <point key="canvasLocation" x="2681" y="-1198"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="hIZ-8n-IdE">
@@ -565,7 +560,7 @@
                                 </constraints>
                                 <segments>
                                     <segment title="Standard"/>
-                                    <segment title="Satellite"/>
+                                    <segment title="Hybrid"/>
                                 </segments>
                                 <connections>
                                     <action selector="changeMapControl:" destination="d3U-xv-o1r" eventType="valueChanged" id="QG5-iW-qjS"/>

@@ -26,7 +26,9 @@ class InfoViewController: UIViewController {
 
         if let riverIndex = SelectedRiver.River.selectedRiver {
             title = riverIndex
-    }
+        } else {
+            title = "No River Selected"
+        }
         
     }
         
