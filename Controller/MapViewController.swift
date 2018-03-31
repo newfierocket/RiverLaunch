@@ -47,10 +47,11 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     //MARK - VIEW WILL APPEAR
     override func viewWillAppear(_ animated: Bool) {
        
-        getRiverData {
+        self.getRiverData {
             self.addLaunchData()
             self.zoomToRiver()
         }
+       
         
 //        let addButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(actionAdd))
 //        navigationItem.rightBarButtonItem = addButtonItem
@@ -70,6 +71,22 @@ class MapViewController: UIViewController, MKMapViewDelegate{
 
 //MARK: - GET DATA
 extension MapViewController {
+    
+    func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
+        print(renderCount)
+        if riverMapView.annotations.count <= 1 && renderCount == 0 {
+            KVNProgress.showError(withStatus: "No Data Added!")
+            
+        } else if riverMapView.annotations.count > 1 && (renderCount > 0 && renderCount < 2) {
+            KVNProgress.showSuccess(withStatus: "Data Loaded")
+           
+        }
+         renderCount += 1
+       
+    }
+    
+    
+    
     
     func getRiverData(completion: @escaping () -> Void) {
         
@@ -105,14 +122,7 @@ extension MapViewController {
 //MARK - MAPKIT FUNCTIONS/DELEGATES
 extension MapViewController {
     
-    func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
-        
-        if riverArray.count == 0 && renderCount == 0 {
-            KVNProgress.showError(withStatus: "No Data Entered Yet!!")
-            renderCount += 1
-        }
-        
-    }
+    
     
     //MARK: - ADD PIN LOCATION FOR BOAT LAUNCH FROM FIREBASE DATA
     func addLaunchData() {

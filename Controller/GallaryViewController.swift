@@ -12,11 +12,7 @@ import Kingfisher
 
 
 
-class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    @IBOutlet weak var pictureNameLabel: UILabel!
-    
-    @IBOutlet weak var gallaryImageView: UIImageView!
+class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
     
     var imageArray: [ImageData] = [ImageData]()
     var index: String?
@@ -26,8 +22,17 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     var pictureIndex = 0
     var launchNameTextField = UITextField()
     
+    @IBOutlet weak var pictureNameLabel: UILabel!
+    @IBOutlet weak var gallaryImageView: UIImageView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    
+    //MARK: VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
+        scrollView.delegate = self
+        scrollView.maximumZoomScale = 5.0
+        scrollView.minimumZoomScale = 1.0
+        
         picker.delegate = self
         pictureNameLabel.text = ""
         index = SelectedRiver.River.selectedRiver
@@ -36,8 +41,13 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         gallaryImageView.isUserInteractionEnabled = true
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(getSwipeAction(_:)))
-        self.gallaryImageView.addGestureRecognizer(swipeGesture)
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(getSwipeAction(_:)))
+        swipeRight.direction = UISwipeGestureRecognizerDirection.right
+        self.gallaryImageView.addGestureRecognizer(swipeRight)
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(getSwipeAction(_:)))
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.left
+        self.gallaryImageView.addGestureRecognizer(swipeLeft)
         
         getImageData {
             if self.imageArray.count > 0 {
@@ -52,39 +62,30 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
      
     }
-    
-  
-    @objc func getSwipeAction( _ recognizer : UISwipeGestureRecognizer){
-        if imageArray.count == 0 {
-            return
-        } else {
-      
-        let max = imageArray.count - 1
-        if recognizer.direction == .right {
-            print("swiped right")
-            if pictureIndex == max {
-                pictureIndex = 0
-            } else {
-                pictureIndex += 1
-            }
-            let url = URL(string: imageArray[pictureIndex].imageURL)
-            gallaryImageView.kf.setImage(with: url)
-        } else if recognizer.direction == .left {
-            print("swiped left")
-            if pictureIndex == 0 {
-                pictureIndex = max
-            } else {
-                pictureIndex -= 1
-            }
-        }
-        }
-
-        let url = URL(string: imageArray[pictureIndex].imageURL)
-        pictureNameLabel.text = imageArray[pictureIndex].launchName
-        gallaryImageView.kf.setImage(with: url)
+    //MARK: - ZOOM IN USING SCROLL VIEW
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return gallaryImageView
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        tabBarController?.navigationController?.popToRootViewController(animated: false)
     
+    }
+ 
+   
+}
+//MARK: - UPLOAD DATA TO FIREBASE
+extension GallaryViewController {
+    
+    @IBAction func addPictureButton(_ sender: UIBarButtonItem) {
+        
+        self.picker.allowsEditing = true
+        self.picker.sourceType = .photoLibrary
+        self.picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        self.present(self.picker, animated: true, completion: nil)
+        
+    }
+    //MARK: - UPLOAD TO FIREBASE FUNCTION
     func uploadImageWithData(pickedImage: UIImage) {
         let alert = UIAlertController(title: "Please Enter a Name", message: "", preferredStyle: UIAlertControllerStyle.alert)
         alert.addTextField { (textField) in
@@ -121,45 +122,69 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
                 })
             }
         }
-      
+        
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
- 
-        
-        
-        
-        
-        
         
     }
     
-   
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+}
+
+//MARK: - SWIPE RECOGNIZER
+extension GallaryViewController {
+    
+    @objc func getSwipeAction( _ recognizer : UISwipeGestureRecognizer){
+        if imageArray.count == 0 {
+            return
+        } else {
+            
+            let max = imageArray.count - 1
+            if recognizer.direction == .right {
+                if pictureIndex == max {
+                    pictureIndex = 0
+                } else {
+                    pictureIndex += 1
+                }
+                let url = URL(string: imageArray[pictureIndex].imageURL)
+                gallaryImageView.kf.setImage(with: url)
+            } else if recognizer.direction == .left {
+                if pictureIndex == 0 {
+                    pictureIndex = max
+                } else {
+                    pictureIndex -= 1
+                }
+            }
+        }
         
-        
-        
-        let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        dismiss(animated:true, completion: nil)
-        uploadImageWithData(pickedImage: chosenImage)
-      
+        let url = URL(string: imageArray[pictureIndex].imageURL)
+        pictureNameLabel.text = imageArray[pictureIndex].launchName
+        gallaryImageView.kf.setImage(with: url)
     }
+    
+}
+
+//MARK: - IMAGE PICKER DELEGATES
+extension GallaryViewController {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
     
-    
-    @IBAction func addPictureButton(_ sender: UIBarButtonItem) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        self.picker.allowsEditing = true
-        self.picker.sourceType = .photoLibrary
-        self.picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
-        self.present(self.picker, animated: true, completion: nil)
-      
+        let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+        dismiss(animated:true, completion: nil)
+        uploadImageWithData(pickedImage: chosenImage)
+        
     }
     
-    
+}
+
+
+//MARK: - GET FIRE BASE DATA
+
+extension GallaryViewController {
     func getImageData(completion: @escaping () -> Void) {
         
         let riverDB = Database.database().reference().child("Gallary").child(riverName!)
@@ -170,15 +195,15 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
             let snapShotValue = snapShot.value as! Dictionary<String, String>
             let url = snapShotValue["url"]!
             guard
-            let belongsToRiver = snapShotValue["belongstoriver"],
-            let imageName = snapShotValue["imagename"],
-            let launchName = snapShotValue["launchname"]
-            
+                let belongsToRiver = snapShotValue["belongstoriver"],
+                let imageName = snapShotValue["imagename"],
+                let launchName = snapShotValue["launchname"]
+                
                 else {
                     return
             }
-        
-          
+            
+            
             let imageData = ImageData()
             imageData.imageBelongsToRiver = belongsToRiver
             imageData.imageURL = url
@@ -195,8 +220,7 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
 }
     
-
-
+//MARK: - UPLOAD IMAGE QUALITY AS JPEG
 extension UIImage {
     enum JPEGQuality: CGFloat {
         case lowest    = 0

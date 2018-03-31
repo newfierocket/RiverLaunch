@@ -56,14 +56,11 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
             SelectedRiver.River.selectedRiver = title
             
         }
-        
-       
-        
+      
+        performSegue(withIdentifier: "GoToInfoViewController", sender: self)
     
-        tabBarController?.selectedIndex = 1
         
-        
-        
+      
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

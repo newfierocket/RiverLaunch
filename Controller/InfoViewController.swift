@@ -14,10 +14,11 @@ class InfoViewController: UIViewController {
     
     let riverData = RiverData()
     var riverIndex: Int?
-   
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
        
     }
     
@@ -34,13 +35,13 @@ class InfoViewController: UIViewController {
         
     @IBAction func signOutButton(_ sender: UIButton) {
     
-//        do {
-//            try Auth.auth().signOut()
-//            print("Signed Out!!!")
-//            navigationController?.popToRootViewController(animated: true)
-//        } catch {
-//            print(error)
-//        }
+        do {
+            try Auth.auth().signOut()
+            print("Signed Out!!!")
+            navigationController?.popToRootViewController(animated: true)
+        } catch {
+            print(error)
+        }
         
     }
     
