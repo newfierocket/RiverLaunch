@@ -28,9 +28,12 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
+        
+        
       
 
     }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         

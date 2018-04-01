@@ -12,7 +12,7 @@ import Firebase
 
 class InfoViewController: UIViewController {
     
-    let riverData = RiverData()
+    //let riverData = RiverData()
     var riverIndex: Int?
     
     

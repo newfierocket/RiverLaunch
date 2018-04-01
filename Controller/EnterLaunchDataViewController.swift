@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import SCLAlertView
+import KVNProgress
 
 class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDelegate {
     
@@ -17,35 +18,41 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
     var dataFromDropPinViewController: [String : String]?
     var activeTextField: UITextField!
     var originalHeight: CGFloat?
-    
     var activeField: UITextField?
     var lastOffset: CGPoint!
     var keyboardHeight: CGFloat!
-   
-    @IBOutlet weak var allStackView: UIStackView!
+    var ratingPicker: UIPickerView!
+    
+    let ratingArray = ["1 Star", "2 Star", "3 Star", "4 Star", "5 Star"]
+    
     
     @IBOutlet weak var constraintContentHeight: NSLayoutConstraint!
     @IBOutlet weak var contentView: UIView!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var mainStackView: UIStackView!
-    
-    
     @IBOutlet weak var enteredLaunchNameTextField: UITextField!
     @IBOutlet weak var enteredLatitudeTextField: UITextField!
     @IBOutlet weak var enterLongitudeTextField: UITextField!
     @IBOutlet weak var enteredRatingTextField: UITextField!
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboard()
-        
+        ratingPicker = UIPickerView()
+        ratingPicker.backgroundColor = UIColor(hexString: "#17518D")
+
         enteredRatingTextField.delegate = self
         enterLongitudeTextField.delegate = self
         enteredLatitudeTextField.delegate = self
         enteredLaunchNameTextField.delegate = self
        
         index = SelectedRiver.River.selectedRiver
+        ratingPicker.isHidden = true
+        ratingPicker.delegate = self
+        ratingPicker.dataSource = self
         
         
         let center: NotificationCenter = NotificationCenter.default
@@ -104,10 +111,8 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
     }
     
     func showError() {
+        KVNProgress.showError(withStatus: "Incorrect Data!")
         
-        let alert = SCLAlertView()
-        alert.showError("Incorrect or Incomplete Data")
-        clearTextFields()
     }
     
     func clearTextFields() {
@@ -117,6 +122,8 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
         enteredRatingTextField.text = ""
         
     }
+    
+
     
    
     @IBAction func submitDataButton(_ sender: UIButton) {
@@ -149,7 +156,12 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
         }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        
         activeTextField = textField
+        if activeTextField == enteredRatingTextField {
+            ratingPicker.isHidden = false
+            activeTextField.inputView = ratingPicker
+        }
        
     }
     
@@ -245,8 +257,44 @@ extension EnterLaunchDataViewController {
         }
         keyboardHeight = nil
     }
+}
+    
+extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return ratingArray.count
+    }
+    
+//    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+//        return ratingArray[row]
+//    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        enteredRatingTextField.text = ratingArray[row]
+        activeField?.resignFirstResponder()
+        activeField = nil
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let pickerLabel = UILabel()
+        let title = ratingArray[row]
+        pickerLabel.text = title
+        pickerLabel.textAlignment = .center
+        pickerLabel.textColor = UIColor.flatWhite
+        pickerLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        return pickerLabel
+    }
+    
+    
+    
+    
+    
+    }
 
     
-}
+
 
 

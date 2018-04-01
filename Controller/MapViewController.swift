@@ -12,26 +12,37 @@ import Firebase
 import SCLAlertView
 import KVNProgress
 
-class MapViewController: UIViewController, MKMapViewDelegate{
+class MapViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
    
     //MARK - VARIABLES
     let regionRadius: CLLocationDistance = 20000
     var index: Int?
-    let riverData = RiverData()
+    //let riverData = RiverData()
     var initialLocation: CLLocation?
     var riverName: String?
     var riverArray : [LaunchData] = [LaunchData]()
     var renderCount: Int = 0
-  
+   
+    
     //MARK - OUTLETS
     @IBOutlet weak var riverMapView: MKMapView!
     
+    @IBOutlet weak var launchPickerView: UIPickerView!
+    @IBOutlet weak var pickerViewContainer: UIView!
+    
+    @IBOutlet weak var pickerToolBar: UIToolbar!
     
     
     //MARK - VIEWDIDLOAD
     override func viewDidLoad() {
        
         super.viewDidLoad()
+        launchPickerView.delegate = self
+        launchPickerView.dataSource = self
+        pickerViewContainer.isHidden = true
+        //pickerToolBar.setBackgroundImage(UIImage(named:"Nighthawk"), forToolbarPosition: .any, barMetrics: .default)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissPickerView))
+        view.addGestureRecognizer(tap)
         
         riverMapView.delegate = self
         riverMapView.showsUserLocation = true
@@ -47,25 +58,57 @@ class MapViewController: UIViewController, MKMapViewDelegate{
     //MARK - VIEW WILL APPEAR
     override func viewWillAppear(_ animated: Bool) {
        
+        
         self.getRiverData {
             self.addLaunchData()
-            self.zoomToRiver()
+            if self.riverArray.count == 1 {
+             self.zoomToRiver(with: self.riverArray[0])
+            }
+            
         }
        
         
-//        let addButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(actionAdd))
-//        navigationItem.rightBarButtonItem = addButtonItem
+        let addButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(loadPickerWheel))
+        navigationItem.rightBarButtonItem = addButtonItem
     }
+   
+    
+    //MARK: - DISMISS PICKER VIEW
+    
+    @objc func dismissPickerView() {
+        pickerViewContainer.isHidden = true
+     
+    }
+    //MARK: - PICKER DONE BUTTON
+    @IBAction func pickerDoneButton(_ sender: UIBarButtonItem) {
+        let index = launchPickerView.selectedRow(inComponent: 0)
+        zoomToRiver(with: riverArray[index])
+        self.pickerViewContainer.isHidden = true
+        
+        
+    }
+    
+   
     
     //MARK: - CLEAR RIVERARRAY TO STOP DUPLICATE ENTRIES
     override func viewWillDisappear(_ animated: Bool) {
-        print(riverArray.count)
+        
         riverArray = []
         renderCount = 0
     }
-    
-    
-    
+    //MARK: - LOAD PICKER WHEEL BUTTON
+    @objc func loadPickerWheel() {
+       
+        if riverArray.count > 0 {
+            pickerViewContainer.isHidden = false
+       
+        launchPickerView.reloadAllComponents()
+        
+        } else {
+        KVNProgress.showError(withStatus: "No Data to Load")
+        }
+    }
+  
 }
 
 
@@ -73,7 +116,7 @@ class MapViewController: UIViewController, MKMapViewDelegate{
 extension MapViewController {
     
     func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
-        print(renderCount)
+        
         if riverMapView.annotations.count <= 1 && renderCount == 0 {
             KVNProgress.showError(withStatus: "No Data Added!")
             
@@ -84,10 +127,8 @@ extension MapViewController {
          renderCount += 1
        
     }
-    
-    
-    
-    
+ 
+    //MARK: - GET RIVER DATA COMPLETION
     func getRiverData(completion: @escaping () -> Void) {
         
         
@@ -96,23 +137,17 @@ extension MapViewController {
         riverDB.observe(.childAdded) { (snapShot) in
             
             let snapShotValue = snapShot.value as! Dictionary<String, String>
-            let launchName = snapShotValue["launchname"]!
-            
-            let latitude = snapShotValue["latitude"]!
-            let longitude = snapShotValue["longitude"]!
-            let rating = snapShotValue["rating"]!
-            
-            
             
             let launchData = LaunchData()
-            launchData.launchName = launchName
-            launchData.latitude = latitude
-            launchData.longitude = longitude
-            launchData.rating = rating
-            
+            launchData.launchName = snapShotValue["launchname"]!
+            launchData.latitude = snapShotValue["latitude"]!
+            launchData.longitude = snapShotValue["longitude"]!
+            launchData.rating = snapShotValue["rating"]!
+           
             self.riverArray.append(launchData)
             
             completion()
+            
             
         }
         
@@ -133,7 +168,7 @@ extension MapViewController {
             let mylatitude = Double(riverArray[i].latitude)
             let mylongitude = Double(riverArray[i].longitude)
             let coordinate = CLLocationCoordinate2D(latitude: mylatitude!, longitude: mylongitude!)
-            let pin = BoatLaunchData(title: title!, locationName: launchName, coordinate: coordinate)
+            let pin = BoatLaunchData(title: launchName, locationName: title!, coordinate: coordinate)
             
             riverMapView.addAnnotation(pin)
             
@@ -176,20 +211,56 @@ extension MapViewController {
     }
     
     //MARK: - ZOOM TO AREA
-    func zoomToRiver() {
+    func zoomToRiver(with location: LaunchData) {
         
-        let startingPoint = riverArray[0]
-        if let myLatitude = Double(startingPoint.latitude) {
-            let myLongitude = Double(startingPoint.longitude)
-            initialLocation = CLLocation(latitude: myLatitude, longitude: myLongitude!)
+        
+            let myLatitude = Double(location.latitude)
+            let myLongitude = Double(location.longitude)
+            initialLocation = CLLocation(latitude: myLatitude!, longitude: myLongitude!)
             centerMapOnLocation(location: initialLocation!)
             
         }
         
+    
+}
+
+extension MapViewController {
+        
+    func numberOfComponents(in launchPickerView: UIPickerView) -> Int {
+        return 1
+        
+    }
+    
+    func pickerView(_ launchPickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+       
+        return riverArray.count
+        
     }
     
     
+    
+    func pickerView(_ launchPickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let pickerLabel = UILabel()
+        let title = riverArray[row].launchName
+        pickerLabel.text = title
+        pickerLabel.textAlignment = .center
+        pickerLabel.textColor = UIColor.flatWhite
+        pickerLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        return pickerLabel
+    }
+    
+//    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+//        return riverArray[row].launchName
+//    }
+//
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    
+    }
+
+    
 }
+
+
 
 
 

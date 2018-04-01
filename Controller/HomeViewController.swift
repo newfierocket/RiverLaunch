@@ -14,10 +14,7 @@ import KVNProgress
 class HomeViewController: UIViewController {
 
     @IBOutlet weak var titleLabel: UILabel!
-  
     @IBOutlet weak var emailTextField: UITextField!
-    
-    
     @IBOutlet weak var passwordTextField: UITextField!
     
     
@@ -27,10 +24,8 @@ class HomeViewController: UIViewController {
         self.hideKeyboard()
        
     
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.red], for: .normal)
-        
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.flatWhite], for: .normal)
         titleLabel.textColor = UIColor.flatWhite
-        
         
     }
     
@@ -39,10 +34,10 @@ class HomeViewController: UIViewController {
         
         Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { (user, error) in
             if error != nil {
-                print("error Signing in")
                 print(error!)
                 let error2: NSError = error! as NSError
                 
+                //common log in errors
                 if error2.code == AuthErrorCode.accountExistsWithDifferentCredential.rawValue {
                     KVNProgress.showError(withStatus: "Accont Credentials Wrong", completion: nil)
                 } else if error2.code == AuthErrorCode.userNotFound.rawValue {
@@ -55,9 +50,9 @@ class HomeViewController: UIViewController {
          
                 
             } else {
-                print("User Authenticated")
+                KVNProgress.showSuccess(withStatus: "Logged In")
                 self.performSegue(withIdentifier: "GoToMain", sender: self)
-                //SVProgressHUD.dismiss()
+                
             }
         }
     
@@ -72,29 +67,22 @@ class HomeViewController: UIViewController {
             if error != nil {
                 print(error!)
                 let error2: NSError = error! as NSError
-                print("hi")
-                
+            
+                //check for common login errors
                 if error2.code == AuthErrorCode.invalidEmail.rawValue {
-                    
                     KVNProgress.showError(withStatus: "Invalid Email", completion: nil)
-                    
-                }else if error2.code == AuthErrorCode.networkError.rawValue {
-                    
+                } else if error2.code == AuthErrorCode.networkError.rawValue {
                     KVNProgress.showError(withStatus: "Network Error", completion: nil)
-                    
-                }else if error2.code == AuthErrorCode.weakPassword.rawValue {
-                    
+                } else if error2.code == AuthErrorCode.weakPassword.rawValue {
                     KVNProgress.showError(withStatus: "Weak Password", completion: nil)
-                    
-                }else if error2.code == AuthErrorCode.emailAlreadyInUse.rawValue {
-                    
+                } else if error2.code == AuthErrorCode.emailAlreadyInUse.rawValue {
                     KVNProgress.showError(withStatus: "Email Already In Use", completion: nil)
                 }
+            
             } else {
-                //sucess
-                print("Success")
+            
                 self.performSegue(withIdentifier: "GoToMain", sender: self)
-                //SVProgressHUD.dismiss()
+                KVNProgress.showSuccess(withStatus: "Registered")
             }
         }
         
@@ -107,17 +95,15 @@ class HomeViewController: UIViewController {
 extension UIViewController {
     func hideKeyboard()
     {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(UIViewController.dismissKeyboard))
-        
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     
-    @objc func dismissKeyboard()
-    {
+    @objc func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    
 }
 
 
