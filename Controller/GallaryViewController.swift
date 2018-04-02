@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import Kingfisher
+import KVNProgress
 
 
 
@@ -60,8 +61,8 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             
         }
-     
     }
+   
     //MARK: - ZOOM IN USING SCROLL VIEW
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return gallaryImageView
@@ -72,8 +73,10 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     }
  
-   
 }
+
+
+
 //MARK: - UPLOAD DATA TO FIREBASE
 extension GallaryViewController {
     
@@ -212,6 +215,7 @@ extension GallaryViewController {
             
             
             self.imageArray.append(imageData)
+           
             
             completion()
             

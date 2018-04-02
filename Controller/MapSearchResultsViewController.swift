@@ -41,9 +41,7 @@ extension MapSearchResultsViewController: UISearchResultsUpdating {
         request.region = mapView.region
         let search = MKLocalSearch(request: request)
         search.start { response, _ in
-            guard let response = response else {
-                return
-            }
+            guard let response = response else { return }
             self.matchingItems = response.mapItems
             self.tableView.reloadData()
         }

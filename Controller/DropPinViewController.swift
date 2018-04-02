@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import SCLAlertView
+import KVNProgress
 
 protocol MyProtocol {
     func setResultOfDroppedPin(valueSent: [String : String])
@@ -24,11 +25,12 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     
     @IBOutlet weak var riverDropPinMapView: MKMapView!
     
-    let locationManager = CLLocationManager()
     
+    let locationManager = CLLocationManager()
     var searchResultsController: UISearchController? = nil
     var delegate: MyProtocol?
     var selectedPin: MKPlacemark? = nil
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +40,8 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        let alert1 = SCLAlertView()
-        let alert2 = SCLAlertView()
-        alert1.showInfo("Search or pinch to zoom")
-        alert2.showInfo("Triple Tap to set location")
+        let alert = SCLAlertView()
+        alert.showInfo("Triple Tap to set location")
         
        
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! MapSearchResultsViewController
