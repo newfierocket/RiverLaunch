@@ -13,7 +13,8 @@ import KVNProgress
 
 
 
-class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
+class GallaryViewController: UIViewController, UINavigationControllerDelegate, UIScrollViewDelegate {
+    
     
     var imageArray: [ImageData] = [ImageData]()
     var index: String?
@@ -80,7 +81,8 @@ class GallaryViewController: UIViewController, UIImagePickerControllerDelegate, 
 //MARK: - UPLOAD DATA TO FIREBASE
 extension GallaryViewController {
     
-    @IBAction func addPictureButton(_ sender: UIBarButtonItem) {
+    @IBAction func addPicture(_ sender: UIBarButtonItem) {
+    
         
         self.picker.allowsEditing = true
         self.picker.sourceType = .photoLibrary
@@ -168,7 +170,7 @@ extension GallaryViewController {
 }
 
 //MARK: - IMAGE PICKER DELEGATES
-extension GallaryViewController {
+extension GallaryViewController: UIImagePickerControllerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

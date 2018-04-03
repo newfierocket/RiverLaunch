@@ -13,11 +13,12 @@ let riverDict = SelectedRiver.River.riverNames
 var changedRiverDict = riverDict
 
 
-class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class RiverViewController: UIViewController {
     
     @IBOutlet weak var riverSearchBar: UISearchBar!
-    
     @IBOutlet weak var RiverTableView: UITableView!
+    
+    
     let gesture = UIGestureRecognizer()
     
     
@@ -28,12 +29,14 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
-        
-        
-      
-
+     
     }
 
+    
+}
+
+//MARK: - TABLEVIEW DELEGATES
+extension RiverViewController:  UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -59,22 +62,25 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
             SelectedRiver.River.selectedRiver = title
             
         }
-      
-        performSegue(withIdentifier: "GoToInfoViewController", sender: self)
-    
         
-      
+        performSegue(withIdentifier: "GoToInfoViewController", sender: self)
+        
     }
+    
+}
+
+//MARK: - SEARCH BAR DELEGATES
+extension RiverViewController: UISearchBarDelegate {
+    
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchText = riverSearchBar.text!
         changedRiverDict = riverDict.filter {$0.contains(searchText)}
         RiverTableView.reloadData()
-    
-    
+        
     }
     
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if riverSearchBar.text?.count == 0 {
             changedRiverDict = riverDict
@@ -82,8 +88,6 @@ class RiverViewController: UIViewController, UITableViewDelegate, UITableViewDat
         }
         
     }
-    
-    
     
 }
  

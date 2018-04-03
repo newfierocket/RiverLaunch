@@ -12,12 +12,11 @@ import Firebase
 import SCLAlertView
 import KVNProgress
 
-class MapViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class MapViewController: UIViewController, MKMapViewDelegate {
    
     //MARK - VARIABLES
     let regionRadius: CLLocationDistance = 20000
     var index: Int?
-    //let riverData = RiverData()
     var initialLocation: CLLocation?
     var riverName: String?
     var riverArray : [LaunchData] = [LaunchData]()
@@ -26,10 +25,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIPickerViewDelega
     
     //MARK - OUTLETS
     @IBOutlet weak var riverMapView: MKMapView!
-    
     @IBOutlet weak var launchPickerView: UIPickerView!
     @IBOutlet weak var pickerViewContainer: UIView!
-    
     @IBOutlet weak var pickerToolBar: UIToolbar!
     
     
@@ -224,7 +221,7 @@ extension MapViewController {
     
 }
 
-extension MapViewController {
+extension MapViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         
     func numberOfComponents(in launchPickerView: UIPickerView) -> Int {
         return 1

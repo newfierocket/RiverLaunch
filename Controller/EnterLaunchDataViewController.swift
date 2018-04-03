@@ -11,7 +11,7 @@ import Firebase
 import SCLAlertView
 import KVNProgress
 
-class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDelegate {
+class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
     var riverName: String?
     var index: String?
@@ -66,8 +66,6 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
     
     override func viewWillAppear(_ animated: Bool) {
         
-        
-        
         if let riverIndex = index {
             riverName = riverIndex
             
@@ -76,7 +74,6 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
         }
         
         navigationItem.title = riverName
-
 
     }
     
@@ -100,7 +97,6 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
             enterLongitudeTextField.text = data["longitude"]
         }
         
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -122,9 +118,7 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
         enteredRatingTextField.text = ""
         
     }
-    
-
-    
+   
    
     @IBAction func submitDataButton(_ sender: UIButton) {
         
@@ -154,53 +148,15 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol, UITextFieldDe
         clearTextFields()
         
         }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        
-        activeTextField = textField
-        if activeTextField == enteredRatingTextField {
-            ratingPicker.isHidden = false
-            activeTextField.inputView = ratingPicker
-        }
-       
-    }
-    
    
-    
-//    @objc func keyBoardWillShow(notification: Notification) {
-//
-//        let info: NSDictionary = notification.userInfo! as NSDictionary
-//        let keyboardSize = (info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-//        let keyboardY = view.frame.size.height - keyboardSize.height
-//        originalHeight = view.frame.height
-//        let editingTextFieldY: CGFloat! = activeTextField?.frame.origin.y
-//
-//
-//        if editingTextFieldY < keyboardY - 60 {
-//            UIView.animate(withDuration: 0.25, animations: {
-//                self.view.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: (self.view.frame.height - (self.allStackView.frame.origin.y + self.allStackView.frame.height)) + keyboardSize.height)
-//            })
-//        }
-//
-//
-//    }
-//    @objc func keyBoardWillHide(notification: Notification) {
-//        UIView.animate(withDuration: 0.1) {
-//            self.view.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.originalHeight!)
-//
-//        }
-//
-//    }
-    
     override func viewDidDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidHide, object: nil)
     }
- 
-
 }
 
-extension EnterLaunchDataViewController {
+//MARK: - TEXTFIELD DELEGATES
+extension EnterLaunchDataViewController: UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         activeField = textField
         
@@ -215,10 +171,20 @@ extension EnterLaunchDataViewController {
         return true
         
     }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        activeTextField = textField
+        if activeTextField == enteredRatingTextField {
+            ratingPicker.isHidden = false
+            activeTextField.inputView = ratingPicker
+        }
+        
+    }
 }
 
 
-    
+//MARK: - KEYBOARD WILL SHOW/HIDE
 extension EnterLaunchDataViewController {
     @objc func keyboardWillShow(notification: NSNotification) {
         if keyboardHeight != nil {
@@ -258,7 +224,9 @@ extension EnterLaunchDataViewController {
         keyboardHeight = nil
     }
 }
-    
+
+
+//MAR: - PICKER VEW DELEGATES
 extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -268,9 +236,6 @@ extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataS
         return ratingArray.count
     }
     
-//    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-//        return ratingArray[row]
-//    }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         enteredRatingTextField.text = ratingArray[row]
@@ -287,12 +252,9 @@ extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataS
         pickerLabel.font = UIFont.boldSystemFont(ofSize: 20)
         return pickerLabel
     }
+  
     
-    
-    
-    
-    
-    }
+}
 
     
 

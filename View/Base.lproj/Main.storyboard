@@ -247,7 +247,7 @@
                     <navigationItem key="navigationItem" title="Gallery" id="Sns-OD-mf5">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="zt8-Q8-ocz">
                             <connections>
-                                <action selector="addPictureButton:" destination="4fh-fL-1u0" id="KaK-uH-yXZ"/>
+                                <action selector="addPicture:" destination="4fh-fL-1u0" id="Plh-AJ-z2c"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
