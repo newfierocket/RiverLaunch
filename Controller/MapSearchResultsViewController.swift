@@ -21,6 +21,7 @@ class MapSearchResultsViewController: UITableViewController {
 }
 
 extension MapSearchResultsViewController {
+    
    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
     let selectedItem = matchingItems[indexPath.row].placemark
@@ -75,6 +76,7 @@ extension MapSearchResultsViewController: UISearchResultsUpdating {
 }
 
 extension MapSearchResultsViewController {
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return matchingItems.count

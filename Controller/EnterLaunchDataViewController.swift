@@ -156,7 +156,9 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
 }
 
 //MARK: - TEXTFIELD DELEGATES
+
 extension EnterLaunchDataViewController: UITextFieldDelegate {
+    
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         activeField = textField
         
@@ -166,6 +168,7 @@ extension EnterLaunchDataViewController: UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
         activeField?.resignFirstResponder()
         activeField = nil
         return true
@@ -185,8 +188,11 @@ extension EnterLaunchDataViewController: UITextFieldDelegate {
 
 
 //MARK: - KEYBOARD WILL SHOW/HIDE
+
 extension EnterLaunchDataViewController {
+    
     @objc func keyboardWillShow(notification: NSNotification) {
+        
         if keyboardHeight != nil {
             return
         }
@@ -215,6 +221,7 @@ extension EnterLaunchDataViewController {
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
+        
         UIView.animate(withDuration: 0.3) {
             self.constraintContentHeight.constant -= self.keyboardHeight
             
@@ -228,6 +235,7 @@ extension EnterLaunchDataViewController {
 
 //MAR: - PICKER VEW DELEGATES
 extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

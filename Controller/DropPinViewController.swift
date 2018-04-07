@@ -16,6 +16,7 @@ protocol MyProtocol {
 }
 
 protocol HandleMapSearch {
+    
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
@@ -132,6 +133,7 @@ extension DropPinViewController: HandleMapSearch {
         for oldPin in riverDropPinMapView.annotations {
             riverDropPinMapView.removeAnnotation(oldPin)
         }
+        
         //riverDropPinMapView.removeAnnotation(self.riverDropPinMapView.annotations as! MKAnnotation)
         
         let annotation = MKPointAnnotation()

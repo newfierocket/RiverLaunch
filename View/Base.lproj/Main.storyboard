@@ -94,7 +94,7 @@
                                                     <color key="titleColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <segue destination="xFm-tW-fKu" kind="show" id="HSE-PG-1hG"/>
+                                                    <action selector="launchLoacationsButton:" destination="6KI-kW-Gy9" eventType="touchUpInside" id="hiJ-cE-zXB"/>
                                                 </connections>
                                             </button>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="A map view of selectable locations with active directions." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ubp-M0-eUa">
@@ -186,6 +186,9 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item" id="ySf-Jr-mnS"/>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="always" id="G4u-Zo-JEp"/>
+                    <connections>
+                        <segue destination="xFm-tW-fKu" kind="show" identifier="GoToMapView" id="kQc-cV-yVf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Dnv-kz-Xdk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

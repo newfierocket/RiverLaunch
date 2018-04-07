@@ -9,6 +9,7 @@
 import UIKit
 import Foundation
 
+
 let riverDict = SelectedRiver.River.riverNames
 var changedRiverDict = riverDict
 
@@ -23,19 +24,22 @@ class RiverViewController: UIViewController {
     
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         RiverTableView.delegate = self
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
-     
+    
     }
-
+    
+   
     
 }
 
 //MARK: - TABLEVIEW DELEGATES
+
 extension RiverViewController:  UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -46,11 +50,10 @@ extension RiverViewController:  UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "RiverCell") else {fatalError()}
         cell.textLabel?.text = changedRiverDict[indexPath.row]
-        //changedRiverDict.append(riverDict[indexPath.row])
+       
         cell.layer.backgroundColor = UIColor.clear.cgColor
         cell.textLabel?.textColor = UIColor.white
-        
-        
+       
         return cell
     }
     
@@ -70,6 +73,7 @@ extension RiverViewController:  UITableViewDelegate, UITableViewDataSource {
 }
 
 //MARK: - SEARCH BAR DELEGATES
+
 extension RiverViewController: UISearchBarDelegate {
     
     

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import Kingfisher
 import KVNProgress
+import Reachability
 
 
 
@@ -23,12 +24,14 @@ class GallaryViewController: UIViewController, UINavigationControllerDelegate, U
     let imageStorage = Storage.storage()
     var pictureIndex = 0
     var launchNameTextField = UITextField()
+    let networkStatus = Reachability()!
     
     @IBOutlet weak var pictureNameLabel: UILabel!
     @IBOutlet weak var gallaryImageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     
     //MARK: VIEW DID LOAD
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.delegate = self
@@ -51,20 +54,34 @@ class GallaryViewController: UIViewController, UINavigationControllerDelegate, U
         swipeLeft.direction = UISwipeGestureRecognizerDirection.left
         self.gallaryImageView.addGestureRecognizer(swipeLeft)
         
-        getImageData {
-            if self.imageArray.count > 0 {
-                for i in 0..<self.imageArray.count {
-                    let url = URL(string: self.imageArray[i].imageURL)
-                    self.gallaryImageView.kf.setImage(with: url)
-                    self.pictureNameLabel.text = self.imageArray[i].launchName
+        if networkStatus.connection != .none {
+            KVNProgress.show(0, status: "Loading Data")
+            getImageData {
+                if self.imageArray.count > 0 {
                     
+                    for i in 0..<self.imageArray.count {
+                        let url = URL(string: self.imageArray[i].imageURL)
+                        self.gallaryImageView.kf.setImage(with: url)
+                        self.pictureNameLabel.text = self.imageArray[i].launchName
+                        
+                    }
+                    KVNProgress.update(1, animated: true)
+                    KVNProgress.dismiss()
+                    
+                } else {
+                    KVNProgress.dismiss()
+                    KVNProgress.showError(withStatus: "No Pictures to Load")
                 }
+               
             }
-            
+        } else {
+            KVNProgress.showError(withStatus: "No Network Connection")
+        
         }
     }
    
     //MARK: - ZOOM IN USING SCROLL VIEW
+    
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return gallaryImageView
     }
@@ -73,24 +90,33 @@ class GallaryViewController: UIViewController, UINavigationControllerDelegate, U
         tabBarController?.navigationController?.popToRootViewController(animated: false)
     
     }
+    
  
 }
 
 
 
 //MARK: - UPLOAD DATA TO FIREBASE
+
 extension GallaryViewController {
     
     @IBAction func addPicture(_ sender: UIBarButtonItem) {
     
         
-        self.picker.allowsEditing = true
-        self.picker.sourceType = .photoLibrary
-        self.picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
-        self.present(self.picker, animated: true, completion: nil)
+        picker.allowsEditing = true
+        picker.sourceType = .photoLibrary
+       
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            present(self.picker, animated: true, completion: nil)
+        } else {
+            KVNProgress.showError(withStatus: "Photo Library Not Found")
+        }
         
     }
+    
+    
     //MARK: - UPLOAD TO FIREBASE FUNCTION
+    
     func uploadImageWithData(pickedImage: UIImage) {
         let alert = UIAlertController(title: "Please Enter a Name", message: "", preferredStyle: UIAlertControllerStyle.alert)
         alert.addTextField { (textField) in
@@ -118,6 +144,7 @@ extension GallaryViewController {
                             let dataToStore = ["imagename" : imageData.imageName, "url" : imageData.imageURL, "belongstoriver" : imageData.imageBelongsToRiver, "launchname" :  self.launchNameTextField.text!]
                             let myDatabase = Database.database().reference().child("Gallary").child(self.riverName!)
                             myDatabase.childByAutoId().updateChildValues(dataToStore)
+                            self.imageArray.append(imageData)
                             
                             
                         }
@@ -137,6 +164,7 @@ extension GallaryViewController {
 }
 
 //MARK: - SWIPE RECOGNIZER
+
 extension GallaryViewController {
     
     @objc func getSwipeAction( _ recognizer : UISwipeGestureRecognizer){
@@ -170,11 +198,13 @@ extension GallaryViewController {
 }
 
 //MARK: - IMAGE PICKER DELEGATES
+
 extension GallaryViewController: UIImagePickerControllerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
+    
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
@@ -190,43 +220,42 @@ extension GallaryViewController: UIImagePickerControllerDelegate {
 //MARK: - GET FIRE BASE DATA
 
 extension GallaryViewController {
+    
     func getImageData(completion: @escaping () -> Void) {
         
         let riverDB = Database.database().reference().child("Gallary").child(riverName!)
-        //group.enter()
-        riverDB.observe(.childAdded) { (snapShot) in
-            
-            
-            let snapShotValue = snapShot.value as! Dictionary<String, String>
-            let url = snapShotValue["url"]!
-            guard
-                let belongsToRiver = snapShotValue["belongstoriver"],
-                let imageName = snapShotValue["imagename"],
-                let launchName = snapShotValue["launchname"]
-                
-                else {
-                    return
-            }
-            
-            
-            let imageData = ImageData()
-            imageData.imageBelongsToRiver = belongsToRiver
-            imageData.imageURL = url
-            imageData.imageName = imageName
-            imageData.launchName = launchName
-            
-            
-            self.imageArray.append(imageData)
-           
-            
-            completion()
-            
-        }
         
+        riverDB.observeSingleEvent(of: .value, with:  { (snapShot) in
+            if let _ = snapShot.value as? NSNull {
+                KVNProgress.update(0.75, animated: true)
+                completion()
+            } else {
+                KVNProgress.update(0.5, animated: true)
+                let snapShotValue = snapShot.value as! Dictionary<String, AnyObject>
+                let keyArray = snapShotValue.keys
+                
+                for key in keyArray {
+                    let imageData = ImageData()
+                    
+                    imageData.imageURL = snapShotValue[key]!["url"] as! String
+                    imageData.imageBelongsToRiver = snapShotValue[key]!["belongstoriver"] as! String
+                    imageData.imageName = snapShotValue[key]!["imagename"] as! String
+                    imageData.launchName = snapShotValue[key]!["launchname"] as! String
+
+                    self.imageArray.append(imageData)
+
+                    }
+                completion()
+            }
+        
+        })
+ 
     }
 }
+
     
 //MARK: - UPLOAD IMAGE QUALITY AS JPEG
+
 extension UIImage {
     enum JPEGQuality: CGFloat {
         case lowest    = 0
