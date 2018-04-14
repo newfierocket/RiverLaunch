@@ -8,7 +8,6 @@
 
 import UIKit
 import Firebase
-import SwiftyJSON
 import KVNProgress
 import Reachability
 
@@ -40,15 +39,16 @@ class InfoViewController: UIViewController {
     //MARK: - GET RIVER DATA COMPLETION
     
     func getRiverData(completion: @escaping () -> Void) {
-        KVNProgress.update(0.25, animated: true)
+        //KVNProgress.update(0.25, animated: true)
+      
         let riverDB = Database.database().reference().child("launch").child(riverName!)
         
         riverDB.observeSingleEvent(of: .value, with:  { (snapShot) in
             if let _ = snapShot.value as? NSNull {
-                KVNProgress.update(0.75, animated: true)
+                //KVNProgress.update(0.75, animated: true)
                 completion()
             } else {
-                KVNProgress.update(0.5, animated: true)
+                //KVNProgress.update(0.5, animated: true)
                 let snapShotValue = snapShot.value as! Dictionary<String, AnyObject>
                 let keyArray = snapShotValue.keys
                 
@@ -63,7 +63,7 @@ class InfoViewController: UIViewController {
                     
                 }
                 
-                KVNProgress.update(0.75, animated: true)
+                //KVNProgress.update(0.75, animated: true)
                 completion()
             }
             
@@ -77,11 +77,12 @@ class InfoViewController: UIViewController {
     
     @IBAction func launchLoacationsButton(_ sender: UIButton) {
         if networkStatus.connection != . none {
-            KVNProgress.show(0, status: "Loading")
+            KVNProgress.showSuccess(withStatus: "Getting Data")
+            //KVNProgress.show(0, status: "Loading")
             getRiverData {
-                KVNProgress.update(1, animated: true)
-                KVNProgress.dismiss()
-                print("Completion")
+                //KVNProgress.update(1, animated: true)
+                //KVNProgress.dismiss()
+                
                 self.performSegue(withIdentifier: "GoToMapView", sender: self)
             }
         } else {

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import SCLAlertView
 import KVNProgress
+import ChameleonFramework
 
 class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
@@ -163,7 +164,7 @@ extension EnterLaunchDataViewController: UITextFieldDelegate {
         activeField = textField
         
         lastOffset = self.scrollView.contentOffset
-        print("yoyoyoyoyo\(lastOffset)")
+        
         return true
     }
     
@@ -210,7 +211,7 @@ extension EnterLaunchDataViewController {
             if collapseSpace < 0 {
                 return
             }
-            print(activeTextField)
+            
             UIView.animate(withDuration: 0.3, animations: {  // x: self.lastOffset.x
                 self.scrollView.contentOffset = CGPoint(x: 50, y: collapseSpace + 10)
             })

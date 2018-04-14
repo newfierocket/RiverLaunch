@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Foundation
+//import Foundation
+import Firebase
 
 
 let riverDict = SelectedRiver.River.riverNames
@@ -34,6 +35,27 @@ class RiverViewController: UIViewController {
     
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        let signoutButton = UIBarButtonItem(title: "Sign Out", style: .plain, target: self, action: #selector(signout))
+       // let signoutButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(signout))
+        //navigationItem.setRightBarButtonItems([signoutButton], animated: false)
+        signoutButton.tintColor = UIColor.white
+        navigationItem.rightBarButtonItem = signoutButton
+        
+    }
+    
+    @objc func signout() {
+        
+        do {
+            try Auth.auth().signOut()
+            navigationController?.popToRootViewController(animated: true)
+  
+        } catch {
+            print(error)
+        }
+    }
+    
+  
    
     
 }

@@ -62,7 +62,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
        
-        let addButtonItem = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(loadPickerWheel))
+        let addButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(loadPickerWheel))
         navigationItem.rightBarButtonItem = addButtonItem
     }
     
@@ -77,8 +77,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         if networkStatus.connection != .none {
             if riverArray.count > 0 {
-                KVNProgress.showSuccess(withStatus: "\(riverArray.count) Locations Added")
                 zoomToRiver(with: riverArray[0])
+                KVNProgress.showSuccess(withStatus: "\(riverArray.count) Locations Added")
             } else {
                 KVNProgress.showError(withStatus: "No Data Yet")
             }
@@ -100,6 +100,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBAction func pickerDoneButton(_ sender: UIBarButtonItem) {
         
         let index = launchPickerView.selectedRow(inComponent: 0)
+        regionRadius = 20000
         zoomToRiver(with: riverArray[index])
         self.pickerViewContainer.isHidden = true
         
@@ -141,7 +142,7 @@ extension MapViewController {
     func addLaunchData() {
         
         for i in 0..<riverArray.count {
-            print(i)
+           
             let title = riverName
             let launchName = riverArray[i].launchName
             let mylatitude = Double(riverArray[i].latitude)

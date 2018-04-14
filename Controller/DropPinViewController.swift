@@ -95,8 +95,7 @@ class DropPinViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         let annotation = MKPointAnnotation()
         let touchedPoint = gestureRecognizer.location(in: riverDropPinMapView)
         let corrdinates = riverDropPinMapView.convert(touchedPoint, toCoordinateFrom: riverDropPinMapView)
-        print(corrdinates.latitude)
-        print(corrdinates.longitude)
+       
         annotation.coordinate = corrdinates
         annotation.title = "Dropped Pin"
         riverDropPinMapView.addAnnotation(annotation)

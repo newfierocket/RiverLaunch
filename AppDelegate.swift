@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if user != nil {
                 self.window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "TabBarController")
             } else {
-                self.window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "HomeViewController")
+                self.window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "HomeNavController")
             }
             
         }

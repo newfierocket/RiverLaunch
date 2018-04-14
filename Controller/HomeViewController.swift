@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import ChameleonFramework
 import Firebase
 import KVNProgress
 import Reachability
@@ -18,6 +17,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     
+    
     let networkStatus = Reachability()!
     
     override func viewDidLoad() {
@@ -25,17 +25,21 @@ class HomeViewController: UIViewController {
         self.hideKeyboard()
        
     
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.flatWhite], for: .normal)
-        titleLabel.textColor = UIColor.flatWhite
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor.white], for: .normal)
+        titleLabel.textColor = UIColor.white
         
     }
     
     
+    
+   
+    
     @IBAction func loginButton(_ sender: UIButton) {
+        
         if networkStatus.connection != .none {
             Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!) { (user, error) in
                 if error != nil {
-                    print(error!)
+                    
                     let error2: NSError = error! as NSError
                     
                     //common log in errors
@@ -64,32 +68,39 @@ class HomeViewController: UIViewController {
     
    
     
-    @IBAction func registerButton(_ sender: UIButton) {
+    
+    @IBAction func forgotPasswordButton(_ sender: UIButton) {
+        var textfield = UITextField()
         
-        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { (user, error) in
+        let alert = UIAlertController(title: "Password Reset", message: "Enter Email", preferredStyle: .alert)
+        alert.addTextField { (enteredTextfield) in
+            enteredTextfield.placeholder = "Email"
+            textfield = enteredTextfield
             
-            if error != nil {
-                print(error!)
-                let error2: NSError = error! as NSError
-            
-                //check for common login errors
-                if error2.code == AuthErrorCode.invalidEmail.rawValue {
-                    KVNProgress.showError(withStatus: "Invalid Email", completion: nil)
-                } else if error2.code == AuthErrorCode.networkError.rawValue {
-                    KVNProgress.showError(withStatus: "Network Error", completion: nil)
-                } else if error2.code == AuthErrorCode.weakPassword.rawValue {
-                    KVNProgress.showError(withStatus: "Weak Password", completion: nil)
-                } else if error2.code == AuthErrorCode.emailAlreadyInUse.rawValue {
-                    KVNProgress.showError(withStatus: "Email Already In Use", completion: nil)
+        }
+        let action = UIAlertAction(title: "Password Reset", style: .default) { (alert) in
+            if let emailToSend = textfield.text {
+                if self.networkStatus.connection != .none {
+                    Auth.auth().sendPasswordReset(withEmail: emailToSend) { (error) in
+                        if let error = error {
+                            KVNProgress.showError(withStatus: error.localizedDescription)
+                            
+                        } else {
+                            KVNProgress.showSuccess(withStatus: "Password Reset Email Sent")
+                            
+                        }
+                    }
+                } else {
+                    KVNProgress.showError(withStatus: "Network Error")
                 }
-            
-            } else {
-            
-                self.performSegue(withIdentifier: "GoToMain", sender: self)
-                KVNProgress.showSuccess(withStatus: "Registered")
             }
+            
         }
         
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+    
     }
     
     
@@ -110,3 +121,6 @@ extension UIViewController {
     
     
 }
+
+
+
