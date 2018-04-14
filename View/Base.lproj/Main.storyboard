@@ -513,7 +513,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Aje-R6-UAG"/>
+                    <navigationItem key="navigationItem" title="Login" id="Aje-R6-UAG"/>
                     <connections>
                         <outlet property="emailTextField" destination="jm5-4l-mja" id="kns-DH-iHt"/>
                         <outlet property="passwordTextField" destination="5qF-IM-8Dm" id="xtk-7F-yFZ"/>
@@ -891,6 +891,9 @@
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.091180269059999999" green="0.31972034319999998" blue="0.55534184639999995" alpha="0.73664918660000001" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

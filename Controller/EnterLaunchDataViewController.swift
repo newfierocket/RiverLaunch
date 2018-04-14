@@ -41,7 +41,7 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboard()
+        //self.hideKeyboard()
         ratingPicker = UIPickerView()
         ratingPicker.backgroundColor = UIColor(hexString: "#17518D")
 
@@ -213,7 +213,7 @@ extension EnterLaunchDataViewController {
             }
             
             UIView.animate(withDuration: 0.3, animations: {  // x: self.lastOffset.x
-                self.scrollView.contentOffset = CGPoint(x: 50, y: collapseSpace + 10)
+                self.scrollView.contentOffset = CGPoint(x: 0, y: collapseSpace + 10)
             })
         }
         
