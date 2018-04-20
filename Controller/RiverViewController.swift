@@ -88,7 +88,8 @@ extension RiverViewController:  UITableViewDelegate, UITableViewDataSource {
             
         }
         
-        performSegue(withIdentifier: "GoToInfoViewController", sender: self)
+        //performSegue(withIdentifier: "GoToInfoViewController", sender: self)
+        performSegue(withIdentifier: "Blah", sender: self)
         
     }
     
