@@ -10,15 +10,19 @@ import UIKit
 //import Foundation
 import Firebase
 
+let masterRiverList = SelectedRiver.River.riverNames
+var riverDict = SelectedRiver.River.riverNames[0]
+var changedRiverDict = riverDict[1]
+var userName: String?
+var riverAreaPicker: UIPickerView!
 
-let riverDict = SelectedRiver.River.riverNames
-var changedRiverDict = riverDict
 
 
 class RiverViewController: UIViewController {
     
     @IBOutlet weak var riverSearchBar: UISearchBar!
     @IBOutlet weak var RiverTableView: UITableView!
+    @IBOutlet weak var areaButtonOutlet: UIBarButtonItem!
     
     
     let gesture = UIGestureRecognizer()
@@ -32,6 +36,9 @@ class RiverViewController: UIViewController {
         RiverTableView.dataSource = self
         riverSearchBar.delegate = self
         riverSearchBar.barTintColor = UIColor.clear
+        
+        
+        
     
     }
     
@@ -40,9 +47,41 @@ class RiverViewController: UIViewController {
        // let signoutButton = UIBarButtonItem(barButtonSystemItem: .organize, target: self, action: #selector(signout))
         //navigationItem.setRightBarButtonItems([signoutButton], animated: false)
         signoutButton.tintColor = UIColor.white
-        navigationItem.rightBarButtonItem = signoutButton
+        navigationItem.leftBarButtonItem = signoutButton
         
+        let userid = Auth.auth().currentUser?.uid
+        let database = Database.database().reference().child("users").child(userid!)
+        database.observeSingleEvent(of: .value) { (snapshot) in
+            let snapshotValue = snapshot.value as! Dictionary<String, String>
+            GetUserName.name.userName = (snapshotValue["username"]!)
+            
+        }
+        
+        title = riverDict[0][0]
+        
+        riverAreaPicker = UIPickerView()
+        riverAreaPicker.backgroundColor = UIColor(hexString: "#17518D")
+        riverAreaPicker.isHidden = true
+        let pickerHeight = view.frame.height
+        riverAreaPicker.frame = CGRect(x: 0, y: 120, width: view.frame.width, height: pickerHeight / 4)
+        view.addSubview(riverAreaPicker)
+        riverAreaPicker.delegate = self
+        riverAreaPicker.dataSource = self
+       
     }
+    
+    
+    @IBAction func changeAreaButton(_ sender: UIBarButtonItem) {
+        
+        if riverAreaPicker.isHidden == true {
+            riverAreaPicker.isHidden = false
+            areaButtonOutlet.title = "Done"
+        } else {
+            riverAreaPicker.isHidden = true
+            areaButtonOutlet.title = "Area"
+        }
+    }
+    
     
     @objc func signout() {
         
@@ -102,7 +141,8 @@ extension RiverViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchText = riverSearchBar.text!
-        changedRiverDict = riverDict.filter {$0.contains(searchText)}
+        //changedRiverDict = riverDict[1].filter {$0.contains(searchText)}
+        changedRiverDict = riverDict[1].filter {$0.localizedCaseInsensitiveContains(searchText)}
         RiverTableView.reloadData()
         
     }
@@ -110,11 +150,47 @@ extension RiverViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if riverSearchBar.text?.count == 0 {
-            changedRiverDict = riverDict
+            changedRiverDict = riverDict[1]
             RiverTableView.reloadData()
         }
         
     }
+    
+}
+
+//MARK: - PICKER VEW DELEGATES
+extension RiverViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return masterRiverList.count
+    }
+    
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        riverDict = SelectedRiver.River.riverNames[row]
+        changedRiverDict = riverDict[1]
+        pickerView.isHidden = true
+        title = riverDict[0][0]
+        RiverTableView.reloadData()
+        areaButtonOutlet.title = "Area"
+       
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
+        let titles = SelectedRiver.River.riverNames
+        let pickerLabel = UILabel()
+        let title = titles[row][0][0]
+        pickerLabel.text = title
+        pickerLabel.textAlignment = .center
+        pickerLabel.textColor = UIColor.flatWhite
+        pickerLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        return pickerLabel
+    }
+    
     
 }
  

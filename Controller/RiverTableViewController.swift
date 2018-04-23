@@ -12,27 +12,31 @@ import KVNProgress
 import Reachability
 
 
+
 class RiverTableViewController: UITableViewController {
     
     let table = [
             ["Launch Locations", "A map view of selectable locations with active directions."],
             ["Gallery", "View user uploaded photos or upload your own in the Gallery!"],
             ["Add New Location","Manually enter Lat/Long or use the Map View to drop a pin."],
+            ["River Chat", "A place to share information."],
             ["Sign Out", "You know what to do!"]
             ]
+    
+    
     var riverArray : [LaunchData] = [LaunchData]()
     var riverName: String?
     let networkStatus = Reachability()!
-
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.estimatedRowHeight = 100.0
         tableView.rowHeight = UITableViewAutomaticDimension
         view.backgroundColor = UIColor(patternImage: UIImage(named: "Nighthawk")!)
         tableView.alwaysBounceVertical = false
         
-       
         
         
     }
@@ -45,6 +49,7 @@ class RiverTableViewController: UITableViewController {
             title = "No River Selected"
         }
         
+    
     
     }
     
@@ -129,6 +134,8 @@ class RiverTableViewController: UITableViewController {
         } else if index == 2 {
             setPin()
         } else if index == 3 {
+            chat()
+        } else if index == 4 {
             signout()
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
@@ -144,7 +151,7 @@ class RiverTableViewController: UITableViewController {
     
     func launchLocations() {
         if networkStatus.connection != . none {
-            KVNProgress.showSuccess(withStatus: "Getting Data")
+//            KVNProgress.showSuccess(withStatus: "Getting Data")
             //KVNProgress.show(0, status: "Loading")
             getRiverData {
                 //KVNProgress.update(1, animated: true)
@@ -172,6 +179,9 @@ class RiverTableViewController: UITableViewController {
         func setPin() {
             performSegue(withIdentifier: "GoToPinDrop", sender: self)
         }
+    func chat() {
+        performSegue(withIdentifier: "GoToChat", sender: self)
+    }
         
         func signout() {
             do {
@@ -192,6 +202,6 @@ class RiverTableViewCell: UITableViewCell {
     
     @IBOutlet weak var infoLabel: UILabel!
     
-    
-    
 }
+
+

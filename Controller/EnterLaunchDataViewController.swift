@@ -131,7 +131,10 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
         
         let longitude = enterLongitudeTextField?.text, !longitude.isEmpty,
         
-        let rating = enteredRatingTextField?.text, !rating.isEmpty
+        let rating = enteredRatingTextField?.text, !rating.isEmpty,
+        
+        let user = Auth.auth().currentUser?.email
+        
         
         else { showError()
             return
@@ -141,7 +144,7 @@ class EnterLaunchDataViewController: UIViewController, MyProtocol {
         guard let _ = Double(longitude) else { let alert = SCLAlertView(); alert.showError("Longitude Incorrect"); return}
         
         
-        let riverDataToStore = ["launchname" : launchName, "latitude" : latitude, "longitude" : longitude, "rating" : rating]
+        let riverDataToStore = ["launchname" : launchName, "latitude" : latitude, "longitude" : longitude, "rating" : rating, "user" : user]
         let myDataBase = Database.database().reference().child("launch").child(riverName!)
         myDataBase.childByAutoId().updateChildValues(riverDataToStore)
         let alert = SCLAlertView(); alert.showSuccess("Data Uploaded Successfully")
@@ -234,7 +237,7 @@ extension EnterLaunchDataViewController {
 }
 
 
-//MAR: - PICKER VEW DELEGATES
+//MARK: - PICKER VEW DELEGATES
 extension EnterLaunchDataViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {

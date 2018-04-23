@@ -55,21 +55,22 @@ class GallaryViewController: UIViewController, UINavigationControllerDelegate, U
         self.gallaryImageView.addGestureRecognizer(swipeLeft)
         
         if networkStatus.connection != .none {
-            KVNProgress.show(0, status: "Loading Data")
+            //KVNProgress.show(0, status: "Loading Data")
+            //KVNProgress.show(withStatus: "Loading Data")
             getImageData {
                 if self.imageArray.count > 0 {
-                    
+                    KVNProgress.showSuccess(withStatus: "Loading Data")
                     for i in 0..<self.imageArray.count {
                         let url = URL(string: self.imageArray[i].imageURL)
                         self.gallaryImageView.kf.setImage(with: url)
                         self.pictureNameLabel.text = self.imageArray[i].launchName
                         
                     }
-                    KVNProgress.update(1, animated: true)
-                    KVNProgress.dismiss()
+                   // KVNProgress.update(1, animated: true)
+                   // KVNProgress.dismiss()
                     
                 } else {
-                    KVNProgress.dismiss()
+                   // KVNProgress.dismiss()
                     KVNProgress.showError(withStatus: "No Pictures to Load")
                 }
                
@@ -137,11 +138,14 @@ extension GallaryViewController {
                         return
                     } else {
                         if let url = metadata?.downloadURL()?.absoluteString {
+                            guard let user = Auth.auth().currentUser?.email else { KVNProgress.showError(withStatus: "Error"); return }
                             let imageData = ImageData()
                             imageData.imageName = String(describing: date)
                             imageData.imageURL = url
                             imageData.imageBelongsToRiver = self.riverName!
-                            let dataToStore = ["imagename" : imageData.imageName, "url" : imageData.imageURL, "belongstoriver" : imageData.imageBelongsToRiver, "launchname" :  self.launchNameTextField.text!]
+                            imageData.user = user
+                        
+                            let dataToStore = ["imagename" : imageData.imageName, "url" : imageData.imageURL, "belongstoriver" : imageData.imageBelongsToRiver, "launchname" :  self.launchNameTextField.text!, "user" : imageData.user]
                             let myDatabase = Database.database().reference().child("Gallary").child(self.riverName!)
                             myDatabase.childByAutoId().updateChildValues(dataToStore)
                             self.imageArray.append(imageData)
@@ -157,6 +161,7 @@ extension GallaryViewController {
         
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+        
         
     }
     
@@ -227,10 +232,10 @@ extension GallaryViewController {
         
         riverDB.observeSingleEvent(of: .value, with:  { (snapShot) in
             if let _ = snapShot.value as? NSNull {
-                KVNProgress.update(0.75, animated: true)
+                //KVNProgress.update(0.75, animated: true)
                 completion()
             } else {
-                KVNProgress.update(0.5, animated: true)
+               // KVNProgress.update(0.5, animated: true)
                 let snapShotValue = snapShot.value as! Dictionary<String, AnyObject>
                 let keyArray = snapShotValue.keys
                 

@@ -14,5 +14,6 @@ class ImageData {
     var imageURL = ""
     var imageBelongsToRiver = ""
     var launchName = ""
+    var user = ""
     
 }

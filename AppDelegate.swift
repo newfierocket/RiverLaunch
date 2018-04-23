@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
+        
         Auth.auth().addStateDidChangeListener { (auth, user) in
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if user != nil {
